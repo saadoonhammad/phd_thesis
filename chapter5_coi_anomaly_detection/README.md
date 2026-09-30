@@ -1,4 +1,4 @@
-# Chapter 5: Community-Based Model Sharing and Generalisation: Anomaly Detection in IoT Temperature Sensor Networks
+# Chapter 5: Communities of Interest for Anomaly Detection
 
 A deep learning framework for detecting collective anomalies in IoT temperature sensor data using autoencoder architectures within Communities of Interest (CoIs).
 
