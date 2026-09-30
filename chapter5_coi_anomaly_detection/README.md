@@ -1,71 +1,76 @@
+# Chapter 5: Community-Based Model Sharing and Generalisation: Anomaly Detection in IoT Temperature Sensor Networks
 
-# Community-Based Model Sharing and Generalisation: Anomaly Detection IoT Temperature Sensors Network
-
-A deep learning framework for detecting collective anomalies in IoT temperature sensor data using autoencoder architectures in Communities of Interest (CoIs).
+A deep learning framework for detecting collective anomalies in IoT temperature sensor data using autoencoder architectures within Communities of Interest (CoIs).
 
 ## Overview
 
-This repository contains the implementation of a collective anomaly detection methodology designed to identify abnormal sensor behaviour patterns in temperature time series data from a network of meteorological stations in the province of Castelló. The approach integrates hierarchical clustering to form Communities of Interest (CoIs). Three autoencoder architectures (BiLSTM, LSTM, and MLP) are trained to detect collective anomalies such as sustained temperature drops indicating sensor malfunctions.
+This folder contains the implementation of a collective anomaly detection methodology that identifies abnormal sensor behaviour in temperature time series from a network of meteorological stations in the province of Castelló, Spain. Hierarchical clustering groups the stations into Communities of Interest (CoIs). Three autoencoder architectures (MLP, LSTM and BiLSTM) are trained to detect collective anomalies such as sustained temperature drops that indicate sensor malfunctions.
 
-### Key Features
+### Key features
 
-- **Hierarchical Clustering**: Groups sensors based on temporal, spatial, and elevation similarities (4 clusters: C1-C4)
-- **Multiple Autoencoder Architectures**: MLP, LSTM and BiLSTM implementations
-- **Comprehensive Feature Engineering**: 13-feature pipeline including temporal encodings, statistical features.
-- **Rigorous Hyperparameter Optimisation**: Bayesian Hyperband Optimisation with expanding window cross-validation
-- **Comparison**: Comparison with a global baseline to show the effectiveness of CoIs
+- **Hierarchical clustering**: groups sensors by temporal, spatial and elevation similarity (4 clusters: C1–C4)
+- **Multiple autoencoder architectures**: MLP, LSTM and BiLSTM
+- **Feature engineering**: 13-feature pipeline including temporal encodings and statistical features
+- **Hyperparameter optimisation**: Bayesian Hyperband Optimisation (BOHB) with expanding window cross-validation
+- **Global baseline**: comparison with a network-wide model to assess the effectiveness of CoIs
+
+## Repository structure
+
+| Folder | Content |
+|---|---|
+| `hpo_results/global/`, `hpo_results/representative/` | BOHB scripts and results (convergence, parameter importance, trials) per architecture |
+| `final_models/global/`, `final_models/representative/` | Final training scripts and trained models, scalers, thresholds and metadata per architecture |
+| `evaluation/global/`, `evaluation/representative/` | Test results per architecture: detailed predictions, metrics and comparison plots, per cluster (C1–C4) for representative models |
+
+*Representative* models are trained on the representative station of each community; *global* models are trained on the whole network.
 
 ## Architectures
 
-### Autoencoder Models
+### Autoencoder models
 
-1. **MLP Autoencoder**: Dense layers for baseline comparison and computational efficiency
-2. **BiLSTM Autoencoder**: Bidirectional LSTM layers capture temporal dependencies in both directions
-3. **LSTM Autoencoder**: Unidirectional LSTM for sequential pattern learning
+1. **MLP autoencoder**: dense layers, for baseline comparison and computational efficiency
+2. **LSTM autoencoder**: unidirectional LSTM for sequential pattern learning
+3. **BiLSTM autoencoder**: bidirectional LSTM layers that capture temporal dependencies in both directions
 
-### Feature Engineering Pipeline
+### Feature engineering pipeline
 
-The system extracts 13 features from raw temperature readings:
+13 features are extracted from the raw temperature readings:
 
-- **Raw Temperature**: Original sensor value
-- **Cyclical Temporal Encodings**: `hour_sin`, `hour_cos`, `dow_sin`, `dow_cos`
-- **Derivative Features**: Velocity (1st derivative), Acceleration (2nd derivative), Energy
-- **Volatility Measures**: For detecting stuck or erratic sensors
-- **Statistical Aggregations**: Rolling mean, standard deviation, range
+- **Raw temperature**: original sensor value
+- **Cyclical temporal encodings**: `hour_sin`, `hour_cos`, `dow_sin`, `dow_cos`
+- **Derivative features**: velocity (1st derivative), acceleration (2nd derivative), energy
+- **Volatility measures**: for detecting stuck or erratic sensors
+- **Statistical aggregations**: rolling mean, standard deviation, range
 
 ## Methodology
 
-### Data Processing and Clustering
+### Data processing and clustering
 
 - **Frequency**: 10-minute intervals
-- **Sequence Length**: 24
-- **Clusters**: 4 clusters formed through hierarchical clustering
+- **Sequence length**: 24
+- **Clusters**: 4, formed through hierarchical clustering
 
-### Cross-Validation
+### Cross-validation
 
-Expanding window cross‑validation (5 folds) with purge gap
-- To preserve temporal order and prevent data leakage in time series, we use an expanding window strategy with a mandatory purge gap between training and validation sets.
-- The purge gap length is 2 × sequence_length (default 48 time steps), removing any autocorrelated influence from the training period.
-- The validation set size is fixed and is automatically computed to maximise data usage while ensuring a feasible step between folds.
-- The training set grows with each fold, but the validation window always moves forward without overlap.
+Expanding window cross-validation (5 folds) with a purge gap:
 
-## Hyperparameter Optimisation
+- The expanding window preserves temporal order and prevents data leakage.
+- A purge gap of 2 × sequence length (48 time steps) separates training and validation sets, removing autocorrelated influence from the training period.
+- The validation set size is fixed and computed automatically to maximise data usage while keeping a feasible step between folds.
+- The training set grows with each fold; the validation window moves forward without overlap.
 
-Bayesian Hyperband Optimisation (BOHB) with 60 evaluations. We combine the Tree‑structured Parzen Estimator (TPE) with Hyperband pruning for efficient exploration of the hyperparameter space.
+### Hyperparameter optimisation
 
-## Results
+BOHB with 60 evaluations, combining the Tree-structured Parzen Estimator (TPE) with Hyperband pruning.
 
-### Performance Metrics for Anomaly Detection
+### Evaluation
 
-Models evaluated using:
-- Accuracy, Precision, Recall, F1-Score
-- Specificity, AUC-ROC, PR-AUC
+- Metrics: accuracy, precision, recall, F1-score, specificity, AUC-ROC, PR-AUC
+- Threshold strategy: statistical thresholds (μ + 3σ) proved more practical than ROC-based optimisation
 
-**Threshold Strategy**: Statistical thresholds (μ + 3σ) proved more practical than ROC-based optimization
+### Hardware
 
-### Hardware Used
-
-- **Training**: NVIDIA GPU (tested on RTX 5090)
+Training: NVIDIA GeForce RTX 5090 GPU.
 
 ## Reproducibility
 
@@ -77,22 +82,14 @@ tf.random.set_seed(42)
 tf.config.experimental.enable_op_determinism()
 ```
 
-Comprehensive metadata and scalers are saved for traceability across experiments.
+Metadata and scalers are saved with each trained model for traceability.
 
-## Key Insights
+## Data availability
 
-### Data Leakage Prevention
+The temperature data come from the meteorological station network of the Associació Valenciana de Meteorologia "Josep Peinado" (AVAMET). The data are not included in this repository; access requires permission from AVAMET: https://www.avamet.org/mxo-meteoxarxaonline.html
 
-- Expanding window cross-validation maintains chronological order
-- Purge gaps between training and validation sets
-- Proper sequence splitting to avoid temporal leakage
+## Publication
 
-### Contextual Features
+Hammad, S. S., Ramos, F., Gould Carlson, M., Huerta Guijarro, J., Trilles, S. (2026). Community-based model sharing and generalisation: Anomaly detection in IoT temperature sensor networks. *Internet of Things*, 39, 102027. https://doi.org/10.1016/j.iot.2026.102027
 
-Statistical thresholds and contextual features are essential for detecting collective anomalies that appear normal in isolation.
-
-## Future Work
-
--  Complete generalisability evaluation framework
--  Feature importance analysis using permutation methods
--  Implementation of the trained models on resource-constrained devices such as microcontrollers
+Code archive: https://doi.org/10.5281/zenodo.18758344
