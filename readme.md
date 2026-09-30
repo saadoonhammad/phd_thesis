@@ -1,6 +1,6 @@
 # Anomaly Detection in IoT Systems on Resource-Constrained Devices using TinyML
 
-Code and data supporting the PhD thesis (compilation by publication) of Sahibzada Saadoon Hammad, Institute of New Imaging Technologies (INIT), Universitat Jaume I, Castelló de la Plana, Spain.
+Code and data supporting the PhD thesis (compilation by publication) of Sahibzada Saadoon Hammad, Universitat Jaume I, Castelló de la Plana, Spain.
 
 Each chapter folder corresponds to one peer-reviewed article and was originally developed as a standalone repository. They are consolidated here as a single point of reference.
 
