@@ -1,4 +1,4 @@
-# Contextual Anomaly Detection in IoT Systems on Resource-Constrained Devices using TinyML
+# Anomaly Detection in IoT Systems on Resource-Constrained Devices using TinyML
 
 Code and data supporting the PhD thesis (compilation by publication) of Sahibzada Saadoon Hammad, Institute of New Imaging Technologies (INIT), Universitat Jaume I, Castelló de la Plana, Spain.
 
