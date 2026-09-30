@@ -2,6 +2,8 @@
 
 Systematic Literature Mapping (SLM) of TinyML-based anomaly detection in Artificial Intelligence of Things (AIoT) environments.
 
+This chapter is based on the published article listed below. The systematic review presented here has been updated and extended for the thesis, incorporating a larger corpus and revised taxonomy beyond what was reported in the original publication.
+
 ## Pipeline
 
 | Stage | Records |
